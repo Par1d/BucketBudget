@@ -8,6 +8,11 @@
 </div>
 <h1 class="display-4">@Model.Bucket.Name</h1>
 
+@if (!string.IsNullOrEmpty(Model.ErrorMessage))
+{
+    <div class="alert alert-danger">@Model.ErrorMessage</div>
+}
+
 <form method="post">
     <input hidden asp-for="Transaction.BucketId" value="@Model.Bucket.Id" />
 

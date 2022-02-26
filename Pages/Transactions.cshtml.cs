@@ -1,3 +1,4 @@
+using BucketBudget.Exceptions;
 using BucketBudget.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -14,6 +15,7 @@ public class TransactionsModel : PageModel
     public Bucket Bucket { get; set; }
     [BindProperty]
     public Transaction Transaction { get; set; }
+    public string ErrorMessage { get; set; }
     public TransactionsModel(ApplicationDbContext context)
     {
         _context = context;
@@ -40,16 +42,23 @@ public class TransactionsModel : PageModel
 
     public async Task<IActionResult> OnPost()
     {
-        Transaction.Date = Transaction.Date.Date;
-        Transaction.Amount = -Math.Abs(Transaction.Amount);
+        try
+        {
+            var bucket = await _context.Buckets.FindAsync(Id);
+            bucket.Withdraw(Transaction.Amount);
 
-        var bucket = await _context.Buckets.FindAsync(Id);
-        bucket.Balance += Transaction.Amount;
+            Transaction.Date = Transaction.Date.Date;
+            Transaction.Amount = -Transaction.Amount;
 
-        await _context.Transactions.AddAsync(Transaction);
-        await _context.SaveChangesAsync();
+            await _context.Transactions.AddAsync(Transaction);
+            await _context.SaveChangesAsync();
+            ModelState.Clear();
+        }
+        catch (InsufficientBalanceException e)
+        {
+            ErrorMessage = "Bucket has an insufficient balance for this withdrawal";
+        }
 
-        ModelState.Clear();
         return await OnGet();
     }
 }
