@@ -1,0 +1,35 @@
+﻿@page "{id}"
+@model BucketBudget.Pages.BucketModel
+@{
+    ViewData["Title"] = Model.Bucket.Id == 0 ? "New Bucket" : "Edit " + Model.Bucket.Name;
+}
+
+<h1 class="display-4">@(Model.Bucket.Id == 0 ? "New Bucket" : "Edit " + Model.Bucket.Name)</h1>
+
+<form method="post">
+    <input hidden asp-for="Bucket.Id" />
+
+    <div class="row">
+        <div class="col-12 mb-3">
+            <label asp-for="Bucket.Name"></label>
+            <input class="form-control form-control-lg" asp-for="Bucket.Name" />
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6 mb-3">
+            <label asp-for="Bucket.DropAmount"></label>
+            <div class="input-group">
+                <span class="input-group-text">$</span>
+                <input class="form-control" asp-for="Bucket.DropAmount" />
+            </div>
+        </div>
+        <div class="col-md-6 mb-3">
+            <label asp-for="Bucket.MaxBalance"></label>
+            <div class="input-group">
+                <span class="input-group-text">$</span>
+                <input class="form-control" asp-for="Bucket.MaxBalance" />
+            </div>
+        </div>
+    </div>
+    <button class="btn btn-primary">Save</button>
+</form>

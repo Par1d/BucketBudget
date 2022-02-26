@@ -1,0 +1,23 @@
+$primary: #6c5b7b;
+$dark: #355c7d;
+$info: #f67280;
+$secondary: #c06c84;
+
+@import "./node_modules/bootstrap/scss/bootstrap";
+
+table.buckets {
+  border-collapse: collapse;
+  user-select: none;
+
+  tr:hover {
+    cursor: pointer;
+  }
+
+  td {
+    padding: 1em 0;
+    border-color: $dark;
+    border-style: solid;
+    border-width: 1px 0;
+    align-content: middle;
+  }
+}

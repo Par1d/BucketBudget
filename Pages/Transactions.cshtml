@@ -1,0 +1,63 @@
+﻿@page "{id}"
+@model BucketBudget.Pages.TransactionsModel
+@{
+    ViewData["Title"] = Model.Bucket.Name + " Transactions";
+}
+<div class="float-end shadow-sm border border-success rounded p-2 bg-light">
+    <h2 class="loat-end m-0 h1 fw-light">@Model.Bucket.Balance.ToString("c")</h2>
+</div>
+<h1 class="display-4">@Model.Bucket.Name</h1>
+
+<form method="post">
+    <input hidden asp-for="Transaction.BucketId" value="@Model.Bucket.Id" />
+
+    <div class="row">
+        <div class="col-md-2 mb-3">
+            <label asp-for="Transaction.Date"></label>
+            <input asp-for="Transaction.Date" class="form-control" />
+        </div>
+        <div class="col-md-3 mb-3">
+            <label asp-for="Transaction.Location"></label>
+            <input asp-for="Transaction.Location" class="form-control" />
+        </div>
+        <div class="col-md-3 mb-3">
+            <label asp-for="Transaction.Description"></label>
+            <input asp-for="Transaction.Description" class="form-control" />
+        </div>
+        <div class="col-md-2 mb-3">
+            <label asp-for="Transaction.Amount"></label>
+            <div class="input-group">
+                <span class="input-group-text">$</span>
+                <input asp-for="Transaction.Amount" class="form-control" />
+            </div>
+        </div>
+        <div class="col-md-2">
+            <label class="d-block">&nbsp;</label>
+            <button class="btn btn-success">Withdraw</button>
+        </div>
+
+</form>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Date</th>
+            <th>Location</th>
+            <th>Description</th>
+            <th>Amount</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var transaction in Model.Bucket.Transactions.OrderByDescending(w => w.Date).ThenByDescending(w =>
+        w.Id))
+        {
+            <tr>
+                <td>@transaction.Date.ToShortDateString()</td>
+                <td>@transaction.Location</td>
+                <td>@transaction.Description</td>
+                <td class="@(transaction.Amount > 0 ? "text-success" : "text-danger")">@transaction.Amount.ToString("c")
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

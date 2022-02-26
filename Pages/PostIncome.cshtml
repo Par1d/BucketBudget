@@ -1,0 +1,31 @@
+﻿@page
+@model BucketBudget.Pages.PostIncomeModel
+@{
+    ViewData["Title"] = "Post Income";
+}
+<h1 class="display-4">Post Income</h1>
+@if (Model.Amount > 0)
+{
+    <div class="alert alert-info">
+    The income you posted left @Model.Amount.ToString("c") unallocated. Post again to restart posting from the top.
+</div>
+}
+<form method="post">
+    <div class="row">
+        <div class="col mb-3">
+            <label asp-for="Amount"></label>
+            <div class="input-group">
+                <span class="input-group-text">$</span>
+                <input asp-for="Amount" class="form-control" />
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col mb-3">
+            <label asp-for="Date"></label>
+            <input asp-for="Date" class="form-control" />
+        </div>
+    </div>
+
+    <button class="btn btn-success">Post</button>
+</form>

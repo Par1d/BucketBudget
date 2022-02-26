@@ -1,0 +1,60 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Buckets";
+}
+
+<h2 class="h1 fw-light text-end">@Model.Buckets.Sum(b => b.Balance).ToString("c")</h2>
+
+<table class="w-100 buckets">
+    <thead class="d-none">
+        <tr>
+            <th>Name</th>
+            <th>Drop Amount</th>
+            <th>Max Balance</th>
+            <th>Balance</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var bucket in Model.Buckets)
+        {
+            <tr onclick="goToBucket(@bucket.Id)">
+                <td>
+                    <h2 class="fw-light h4 my-0">@bucket.Name</h2>
+                </td>
+                <td>
+                    <h3 class="fw-light h5 my-0">@bucket.Balance.ToString("c")</h3>
+                </td>
+                <td>
+                    <small class="d-block"><strong>Max Balance</strong></small>
+                    <small class="d-block">@bucket.MaxBalance.ToString("c")</small>
+                </td>
+                <td>
+                    <small class="d-block"><strong>Drop Amount</strong></small>
+                    <small class="d-block">@bucket.DropAmount.ToString("c")</small>
+                </td>
+                <td style="width: 100px;">
+                    <a class="btn btn-sm btn-link text-primary px-1" asp-page="Bucket" asp-route-id="@bucket.Id"><i
+                        class="fas fa-edit"></i></a>
+                    <form asp-page-handler="MoveUp" method="post" class="d-inline">
+                        <input hidden name="id" value="@bucket.Id" />
+                        <button class="btn btn-sm btn-link text-primary px-1"><i class="fas fa-arrow-up"></i></button>
+                    </form>
+                    <form asp-page-handler="MoveDown" method="post" class="d-inline">
+                        <input hidden name="id" value="@bucket.Id" />
+                        <button class="btn btn-sm btn-link text-primary px-1"><i class="fas fa-arrow-down"></i></button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@section scripts {
+<script>
+    function goToBucket(id) {
+        window.location.href = "/Transactions/" + id;
+    }
+</script>
+}

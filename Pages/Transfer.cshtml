@@ -1,0 +1,32 @@
+﻿@page
+@model BucketBudget.Pages.TransferModel
+@{
+    ViewData["Title"] = "Transfer";
+}
+
+<h1 class="display-4">Transfer</h1>
+
+<form method="post">
+    <div class="row">
+        <div class="col-md-6 mb-3">
+            <label asp-for="FromId"></label>
+            <select class="form-control" asp-for="FromId" asp-items="Model.Options">
+                <option disabled selected>Select...</option>
+            </select>
+        </div>
+        <div class="col-md-6 mb-3">
+            <label asp-for="ToId"></label>
+            <select class="form-control" asp-for="ToId" asp-items="Model.Options">
+                <option disabled selected>Select...</option>
+            </select>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <label asp-for="Amount"></label>
+            <input class="form-control" asp-for="Amount" />
+        </div>
+    </div>
+
+    <button class="btn btn-success">Transfer</button>
+</form>
