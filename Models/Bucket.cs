@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using BucketBudget.Exceptions;
 
 namespace BucketBudget.Models;
 
@@ -14,4 +15,26 @@ public class Bucket
     public int Ordinal { get; set; }
 
     public IEnumerable<Transaction> Transactions { get; set; }
+
+    public void Deposit(decimal deposit)
+    {
+        if (deposit <= 0)
+            throw new ArgumentException("Value must be positive", nameof(deposit));
+
+        if (deposit > MaxBalance - Balance)
+            throw new OverDepositException(this, deposit);
+
+        Balance += deposit;
+    }
+
+    public void Withdraw(decimal withdrawal)
+    {
+        if (withdrawal <= 0)
+            throw new ArgumentException("Value must be positive", nameof(withdrawal));
+
+        if (withdrawal > Balance)
+            throw new InsufficientBalanceException(this, withdrawal);
+
+        Balance -= withdrawal;
+    }
 }
