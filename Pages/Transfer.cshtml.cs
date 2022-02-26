@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using BucketBudget.Exceptions;
 using BucketBudget.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -21,27 +22,32 @@ public class TransferModel : PageModel
     public int ToId { get; set; }
     [BindProperty]
     public decimal Amount { get; set; }
+    public string ErrorMessage { get; set; }
 
     public TransferModel(ApplicationDbContext context)
     {
         _context = context;
     }
 
-    public async Task OnGet()
+    public async Task<IActionResult> OnGet()
     {
-        var buckets = await _context.Buckets.ToArrayAsync();
+        var buckets = await _context.Buckets.OrderBy(b => b.Name).ToArrayAsync();
         Options = new SelectList(buckets, nameof(Bucket.Id), nameof(Bucket.Name));
+
+        return Page();
     }
 
     public async Task<IActionResult> OnPost()
     {
-        var from = await _context.Buckets.FindAsync(FromId);
-        var to = await _context.Buckets.FindAsync(ToId);
+        try
+        {
+            var from = await _context.Buckets.FindAsync(FromId);
+            var to = await _context.Buckets.FindAsync(ToId);
 
-        from.Balance -= Amount;
-        to.Balance += Amount;
+            from.Withdraw(Amount);
+            to.Deposit(Amount);
 
-        await _context.Transactions.AddRangeAsync(new[] {
+            await _context.Transactions.AddRangeAsync(new[] {
             new Transaction {
                 BucketId = to.Id,
                 Location = "Buckets",
@@ -57,6 +63,17 @@ public class TransferModel : PageModel
                 Amount = -Amount
             }
         });
+        }
+        catch (InsufficientBalanceException e)
+        {
+            ErrorMessage = "From bucket does not have the amount requested to transfer";
+            return await OnGet();
+        }
+        catch (OverDepositException e)
+        {
+            ErrorMessage = "To bucket does not have room for the amount requested to transfer";
+            return await OnGet();
+        }
 
         await _context.SaveChangesAsync();
 

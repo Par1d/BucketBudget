@@ -38,7 +38,7 @@ public class PostIncomeModel : PageModel
                     Amount = drop
                 });
 
-                bucket.Balance += drop;
+                bucket.Deposit(drop);
                 remaining -= drop;
             }
         }
